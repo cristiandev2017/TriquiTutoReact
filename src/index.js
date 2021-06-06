@@ -4,23 +4,11 @@ import "./index.css";
 
 //Se prueba como se recibe el componente
 class Square extends React.Component {
-  //Se crea constructor para el manejo de los estados state
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
-
+  //El elemento setState me permite llevar el valor que en este caso es X al elemento
   render() {
     return (
-      <button
-        className="square"
-        onClick={() => {
-          this.setState({ value: "X" });
-        }}
-      >
-        {this.state.value}
+      <button className="square" onClick={() => this.props.onClick()}>
+        {this.props.value}
       </button>
     );
   }
@@ -28,8 +16,29 @@ class Square extends React.Component {
 
 //Se envia el value al componente Square
 class Board extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      //Se define un arreglo con 9 valores y con el metodo .fill de javascript le digo que los 9 seran null
+      squares: Array(9).fill(null),
+    };
+  }
+  //Se agrega el evento handleClick este me pintara las X o O
+  handleClick(i) {
+    //El metodo slice devuelve una copia del array inicial sin modificarlo.(recibe el parametro de inicio y el de fin)
+    const squares = this.state.squares.slice();
+    squares[i] = 'X';
+    this.setState({squares: squares});
+  }
   renderSquare(i) {
-    return <Square value={i} />;
+    return (
+      <Square
+        value={this.state.squares[i]}
+        onClick={() => {
+          this.handleClick(i);
+        }}
+      />
+    );
   }
 
   render() {
