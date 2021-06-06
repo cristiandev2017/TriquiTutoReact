@@ -28,6 +28,11 @@ class Board extends React.Component {
   handleClick(i) {
     //El metodo slice devuelve una copia del array inicial sin modificarlo.(recibe el parametro de inicio y el de fin)
     const squares = this.state.squares.slice();
+    //Se agrega validacion para verificar si ya se hizo triqui
+    if(calculateWinner(squares) || squares[i]){
+        //Al tener este return se saldra y no ejecutara mas la funcion por lo que no pintara
+        return;
+    }
     //Se utiliza un operador ternario para definir si va X o O para eso utilizaremos nuestra variable xIsNext
     squares[i] = this.state.xIsNext ? "X" : "O";
     //Como el set es el que me envia el dato aca estamos mandando el que tenemos definido en la linea anterior
@@ -45,7 +50,14 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = "Next player:"+(this.state.xIsNext ? 'X' : 'O');
+    //Ahora llamaremos el ganador 
+    const winner = calculateWinner(this.state.squares);
+    let status;
+    if(winner){
+        status = 'Winner:' +winner;
+    }else{
+        status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     return (
       <div>
@@ -84,6 +96,33 @@ class Game extends React.Component {
       </div>
     );
   }
+}
+
+function calculateWinner(squares) {
+  //Esta me dira cuando se gana
+  const lines = [
+    //Si se hace triqui en horizontal ---
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    //Si se hace triqui en vertical
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    //Por ultimo las 2 diagonales
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  //Aca validaremos primero defino un for hasta el tamaño de la lista anterior
+  for (let i = 0; i < lines.length; i++) {
+    //Esta es una forma de decirle a javascript que mi primer elemento tendra una asignacion de variable de a la b como el segundo valor y asi con los elementos
+    const [a, b, c] = lines[i];
+    //Lo que retornara es el valor final donde termine en el a es decir O o X porque ese es el valor que tendria en ese momento
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
 }
 
 // ========================================
